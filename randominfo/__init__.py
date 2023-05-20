@@ -72,23 +72,43 @@ def get_gender(first_name):
 			break
 	return gender
 
-def get_country(first_name = None):
-	countryFile = csv.reader(open(full_path('data.csv'), 'r'))
-	country = ""
-	if first_name != None:
-		for data in countryFile:
-			if data[0] != '' and data[0] == first_name:
-				country = data[3]
-				break
-		if country == "":
-			print("Specified user data is not available. Tip: Generate random country.")
-	else:
-		filteredData = []
-		for data in countryFile:
-			if data[12] != '':
-				filteredData.append(data[12])
-		country = choice(filteredData)
-	return country
+# def get_country(first_name = None):
+# 	countryFile = csv.reader(open(full_path('data.csv'), 'r'))
+# 	country = ""
+# 	if first_name != None:
+# 		for data in countryFile:
+# 			if data[0] != '' and data[0] == first_name:
+# 				country = data[3]
+# 				break
+# 		if country == "":
+# 			print("Specified user data is not available. Tip: Generate random country.")
+# 	else:
+# 		filteredData = []
+# 		for data in countryFile:
+# 			if data[0] != '':
+# 				filteredData.append(data[3])
+# 		country = choice(filteredData)
+# 	return country
+
+def get_country(first_name=None):
+    countryFile = csv.reader(open(full_path('data.csv'), 'r'))
+    country = ""
+    if first_name is not None:
+        for data in countryFile:
+            if data[0] != '' and data[0] == first_name:
+                country = data[6]
+                break
+        if country == "":
+            print("Specified user data is not available. Tip: Generate random country.")
+    else:
+        filteredData = []
+        for data in countryFile:
+            if data[0] != '':
+                filteredData.append(data[6])
+            if filteredData == '':
+                raise ValueError(f"Empty country data in {countryFile} row. Try again")
+        country = choice(filteredData)
+    return country
 
 def get_full_name(gender = None):
 	return get_first_name(gender) + " " + get_last_name()
@@ -257,25 +277,51 @@ def get_birthdate(startAge = None, endAge = None, _format = "%d %b, %Y"):
 	endTs = endRange.timestamp()
 	return datetime.fromtimestamp(randrange(int(endTs), int(startTs))).strftime(_format)
 
+# def get_address():
+# 	full_addr = []
+# 	addrParam = ['street', 'landmark', 'area', 'city', 'state', 'country', 'pincode']
+# 	for i in range(5,12):
+# 		addrFile = csv.reader(open(full_path('data.csv'), 'r'))
+# 		allAddrs = []
+# 		for addr in addrFile:
+# 			try:
+# 				if addr[i] != '':
+# 					allAddrs.append(addr[i])
+# 			except:
+# 				pass
+# 		full_addr.append(choice(allAddrs))
+# 	full_addr = dict(zip(addrParam, full_addr))
+# 	return full_addr
+
 def get_address():
-	full_addr = []
-	addrParam = ['street', 'landmark', 'area', 'city', 'state', 'country', 'pincode']
-	for i in range(5,12):
-		addrFile = csv.reader(open(full_path('data.csv'), 'r'))
-		allAddrs = []
-		for addr in addrFile:
-			if addr[i] != '':
-				allAddrs.append(addr[i])
-		full_addr.append(choice(allAddrs))
-	full_addr = dict(zip(addrParam, full_addr))
-	return full_addr
+    full_addr = []
+    addrParam = ['street', 'landmark', 'area', 'city', 'state', 'country', 'pincode']
+
+    for i in range(4, 9):
+        addrFile = csv.reader(open(full_path('data.csv'), 'r'))
+        allAddrs = []
+
+        for addr in addrFile:
+            try:
+                if addr[i] != '':
+                    allAddrs.append(addr[i])
+            except IndexError:
+                print(f"Index error occurred for index {i}")
+
+        if len(allAddrs) == 0:
+            print(f"No data available for index {i}")
+        else:
+            full_addr.append(choice(allAddrs))
+
+    full_addr = dict(zip(addrParam, full_addr))
+    return full_addr
 
 def get_hobbies():
 	hobbiesFile = csv.reader(open(full_path('data.csv'), 'r'))
 	allHobbies = []
 	for data in hobbiesFile:
-		if data[4] != '':
-			allHobbies.append(data[4])
+		if data[3] != '':
+			allHobbies.append(data[3])
 	hobbies = []
 	for _ in range (1, randint(2,6)):
 		hobbies.append(choice(allHobbies))
